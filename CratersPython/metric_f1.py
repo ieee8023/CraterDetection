@@ -1,8 +1,7 @@
 # coding: utf-8
-from mxnet import metric
-
-"""Online evaluation metric module."""
 from __future__ import absolute_import
+from mxnet import metric
+"""Online evaluation metric module."""
 
 # from .base import string_types
 import numpy

@@ -9,6 +9,7 @@ import argparse
 import os, sys
 import train_model
 import logging
+import metric_f1
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -58,7 +59,7 @@ net = importlib.import_module("symbol_inception-bn-28-small-j").get_symbol(2)
 data_shape = (1, 28, 28)
 # data
 train = mx.io.ImageRecordIter(
-    path_imgrec = "East-Fold" + `args.fold` +  "-train.rec",
+    path_imgrec = "data/East-Fold" + `args.fold` +  "-train.rec",
     data_shape  = data_shape,
     batch_size  = 100,
     rand_crop   = False,
@@ -67,7 +68,7 @@ train = mx.io.ImageRecordIter(
 )
 
 test = mx.io.ImageRecordIter(
-    path_imgrec = "East-Fold" + `args.fold` +  "-test.rec",
+    path_imgrec = "data/East-Fold" + `args.fold` +  "-test.rec",
     data_shape  = data_shape,
     batch_size  = 100,
     rand_crop   = False,
@@ -118,7 +119,7 @@ model.fit(
     #kvstore            = kv,
     batch_end_callback = mx.callback.Speedometer(batch_size, 50),
     #epoch_end_callback = checkpoint
-    eval_metric = 'f1'
+    eval_metric = metric_f1.F1()
 )
 
 
