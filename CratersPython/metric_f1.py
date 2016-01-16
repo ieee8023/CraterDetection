@@ -25,7 +25,7 @@ class F1(metric.EvalMetric):
             recall = self.tp / (self.tp + self.fn)
             return (self.name, 2 * (precision * recall) / (precision + recall))
         except:
-            return 0.0
+            return (self.name, 0.0)
 
     def update(self, labels, preds):
         assert len(labels) == len(preds)
