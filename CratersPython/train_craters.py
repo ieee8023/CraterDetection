@@ -29,6 +29,15 @@ parser.add_argument('--load-epoch', type=int,
                     help="load the model on an epoch using the model-prefix")
 parser.add_argument('--kv-store', type=str, default='local',
                     help='the kvstore type')
+
+
+
+parser.add_argument('--fold', type=int, default='1')
+parser.add_argument('--region', type=str, default='East')
+
+
+
+
 args = parser.parse_args()
 
 
@@ -44,36 +53,6 @@ def get_mlp():
     fc3  = mx.symbol.FullyConnected(data = act2, name='fc3', num_hidden=10)
     mlp  = mx.symbol.SoftmaxOutput(data = fc3, name = 'softmax')
     return mlp
-
-def get_lenet():
-    """
-    LeCun, Yann, Leon Bottou, Yoshua Bengio, and Patrick
-    Haffner. "Gradient-based learning applied to document recognition."
-    Proceedings of the IEEE (1998)
-    """
-    data = mx.symbol.Variable('data')
-    # first conv
-    conv1 = mx.symbol.Convolution(data=data, kernel=(3,3), num_filter=20)
-#     tanh1 = mx.symbol.Activation(data=conv1, act_type="relu")
-#     pool1 = mx.symbol.Pooling(data=tanh1, pool_type="max",
-#                               kernel=(2,2), stride=(2,2))
-    # second conv
-    conv2 = mx.symbol.Convolution(data=conv1, kernel=(3,3), num_filter=50)
-#     tanh2 = mx.symbol.Activation(data=conv1, act_type="relu")
-#     pool2 = mx.symbol.Pooling(data=tanh2, pool_type="max",
-#                               kernel=(2,2), stride=(2,2))
-    
-    conv3 = mx.symbol.Convolution(data=conv2, kernel=(3,3), num_filter=50)
-    
-    # first fullc
-    flatten = mx.symbol.Flatten(data=conv3)
-    fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=500)
-    tanh3 = mx.symbol.Activation(data=fc1, act_type="relu")
-    # second fullc
-    fc2 = mx.symbol.FullyConnected(data=tanh3, num_hidden=10)
-    # loss
-    lenet = mx.symbol.SoftmaxOutput(data=fc2, name='softmax', )
-    return lenet
 
 
 
@@ -92,15 +71,30 @@ net = importlib.import_module("symbol_inception-bn-28-small-j").get_symbol(2)
 # data
 def get_iterator(args, kv):
     data_shape = (1, 28, 28)
+    
     train = mx.io.ImageRecordIter(
-        path_imgrec = "craters.bin",
+        path_imgrec = "data/" + args.region + "-Fold" + `args.fold` +  "-train.rec",
         data_shape  = data_shape,
         batch_size  = args.batch_size,
         rand_crop   = False,
         rand_mirror = False,
+        shuffle = True,
         num_parts   = kv.num_workers,
-        part_index  = kv.rank)
-    return (train, train)
+        part_index  = kv.rank
+    )
+    
+    test = mx.io.ImageRecordIter(
+        path_imgrec = "data/" + args.region + "-Fold" + `args.fold` +  "-test.rec",
+        data_shape  = data_shape,
+        batch_size  = args.batch_size,
+        rand_crop   = False,
+        rand_mirror = False,
+        shuffle = True,
+        num_parts   = kv.num_workers,
+        part_index  = kv.rank
+    )
+    
+    return (train, test)
 
 # train
 train_model.fit(args, net, get_iterator)

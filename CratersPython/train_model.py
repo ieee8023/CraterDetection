@@ -81,4 +81,5 @@ def fit(args, network, data_loader):
         eval_data          = val,
         kvstore            = kv,
         batch_end_callback = mx.callback.Speedometer(args.batch_size, 50),
-        epoch_end_callback = checkpoint)
+        epoch_end_callback = checkpoint,
+        eval_metric = metric_f1.F1())

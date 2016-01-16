@@ -47,6 +47,7 @@ logger.setLevel(logging.DEBUG)
 
 parser = argparse.ArgumentParser(description='Hello')
 parser.add_argument('--fold', type=int, default='1')
+parser.add_argument('--region', type=str, default='East')
 
 args = parser.parse_args()
 
@@ -59,7 +60,7 @@ net = importlib.import_module("symbol_inception-bn-28-small-j").get_symbol(2)
 data_shape = (1, 28, 28)
 # data
 train = mx.io.ImageRecordIter(
-    path_imgrec = "data/East-Fold" + `args.fold` +  "-train.rec",
+    path_imgrec = "data/" + args.region + "-Fold" + `args.fold` +  "-train.rec",
     data_shape  = data_shape,
     batch_size  = 100,
     rand_crop   = False,
@@ -68,7 +69,7 @@ train = mx.io.ImageRecordIter(
 )
 
 test = mx.io.ImageRecordIter(
-    path_imgrec = "data/East-Fold" + `args.fold` +  "-test.rec",
+    path_imgrec = "data/" + args.region + "-Fold" + `args.fold` +  "-test.rec",
     data_shape  = data_shape,
     batch_size  = 100,
     rand_crop   = False,
@@ -83,8 +84,8 @@ devs = mx.gpu(int(0)) #mx.cpu()
 lr = 0.05
 lr_factor = 1
 lr_factor_epoch = 1
-num_epochs = 50
-batch_size = 100
+num_epochs = 100
+batch_size = 300
 num_examples = 1000
 
 epoch_size = num_examples / batch_size
