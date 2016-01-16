@@ -2,6 +2,7 @@ import find_mxnet
 import mxnet as mx
 import logging
 import os
+import metric_f1
 
 def fit(args, network, data_loader):
     # kvstore
