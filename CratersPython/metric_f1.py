@@ -20,17 +20,13 @@ class F1(metric.EvalMetric):
         super(F1, self)
         
     def get(self):
-        print("total = " + `self.fn + self.fp + self.tn + self.tp` + ", " 
-              + "tp = " + `self.tp`
-              + "tn = " + `self.tn`
-              + "fp = " + `self.fp`
-              + "fn = " + `self.fn`)
+        details = "total:" + `self.fn + self.fp + self.tn + self.tp` + ",tp:" + `self.tp` + ",tn:" + `self.tn` + ",fp:" + `self.fp` + ",fn:" + `self.fn`
         try:
             precision = self.tp / (self.tp + self.fp)
             recall = self.tp / (self.tp + self.fn)
-            return (self.name, 2 * (precision * recall) / (precision + recall))
+            return (details + ", " + self.name, 2 * (precision * recall) / (precision + recall))
         except:
-            return (self.name, 0.0)
+            return (details + ", " + self.name, 0.0)
 
     def update(self, labels, preds):
         assert len(labels) == len(preds)
