@@ -20,6 +20,11 @@ class F1(metric.EvalMetric):
         super(F1, self)
         
     def get(self):
+        print("total = " + `self.fn + self.fp + self.tn + self.tp` + ", " 
+              + "tp = " + `self.tp`
+              + "tn = " + `self.tn`
+              + "fp = " + `self.fp`
+              + "fn = " + `self.fn`)
         try:
             precision = self.tp / (self.tp + self.fp)
             recall = self.tp / (self.tp + self.fn)
